@@ -2,7 +2,7 @@ package MojoX::Tusu::Component::MailFormExample;
 use strict;
 use warnings;
 use utf8;
-use base qw(MojoX::Tusu::MailFormBase);
+use base qw(MojoX::Tusu::Component::MailFormBase);
 use Fcntl qw(:flock);
     
     sub init {
@@ -53,7 +53,7 @@ use Fcntl qw(:flock);
 		my $c = $self->controller;
 		
 		my $tpl = Text::PSTemplate->new;
-		for my $key (@{$self->ini->{form_elements}}) {
+		for my $key (@{$self->ini('form_elements')}) {
 			$tpl->set_var($key => $c->req->body_params->param($key));
 		}
 		my $subject = 'Someone send inquiry';
@@ -92,7 +92,7 @@ EOF
 		
 		my $c = $self->controller;
 		my $tpl = Text::PSTemplate->new;
-		for my $key (@{$self->ini->{form_elements}}) {
+		for my $key (@{$self->ini('form_elements')}) {
 			$tpl->set_var($key => $c->req->body_params->param($key));
 		}
 		my $subject = 'Thank you';

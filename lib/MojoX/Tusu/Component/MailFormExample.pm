@@ -8,57 +8,57 @@ use Fcntl qw(:flock);
     sub init {
         my ($self, $app) = @_;
         $self->set_ini({
-			'tmp_dir' 			=> '',
-			'mailto'			=> [],
-			'logfile'			=> $app->home->rel_file(__PACKAGE__),
-			'smtp_from'			=> 'noreply', ## you can fill @host if needed
-			'smtp_server'		=> 'localhost',
-			'form_elements' 	=> [qw{name mail pref addr company tel1 tel2 tel3 etc}],
-			'auto_respond_to' 	=> 'mail',
-			'upload' => {
-				allowed_extention => ['doc','xls','txt','pdf'],
-				max_filesize => 100000,
-			}
-		});
+            'tmp_dir'           => '',
+            'mailto'            => [],
+            'logfile'           => $app->home->rel_file(__PACKAGE__),
+            'smtp_from'         => 'noreply', ## you can fill @host if needed
+            'smtp_server'       => 'localhost',
+            'form_elements'     => [qw{name mail pref addr company tel1 tel2 tel3 etc}],
+            'auto_respond_to'   => 'mail',
+            'upload' => {
+                allowed_extention => ['doc','xls','txt','pdf'],
+                max_filesize => 100000,
+            }
+        });
     }
 
-	sub validate_form {
-		
-		my ($self) = @_;
-		my $c = $self->controller;
-		my $formdata = $c->req->body_params;
-		my $user_err = $self->user_err;
-		
-		for my $key ('tel1','tel2','tel3') {
-			if (! $formdata->param($key)) {
-				$user_err->stack('お電話番号は必須項目です');
-				last;
-			}
-		}
-		
-		if (my $mail = $formdata->param('mail')) {
-			$mail =~ tr/Ａ-Ｚａ-ｚ０-９/A-Za-z0-9/;
-			if ($mail !~ /^[^@]+@[^.]+\..+/){
-				$user_err->stack('メールアドレスが正しくありません');
-			}
-		}
-		if ($formdata->param('etc') && length($formdata->param('etc')) > 10000) {
-			$user_err->stack('お問い合わせ内容がサイズの上限を超えました');
-		}
-	}
-	
-	sub mail_attr {
-		
-		my ($self) = @_;
-		my $c = $self->controller;
-		
-		my $tpl = Text::PSTemplate->new;
-		for my $key (@{$self->ini('form_elements')}) {
-			$tpl->set_var($key => $c->req->body_params->param($key));
-		}
-		my $subject = 'Someone send inquiry';
-		
-		my $body = $tpl->parse(<<'EOF');
+    sub validate_form {
+        
+        my ($self) = @_;
+        my $c = $self->controller;
+        my $formdata = $c->req->body_params;
+        my $user_err = $self->user_err;
+        
+        for my $key ('tel1','tel2','tel3') {
+            if (! $formdata->param($key)) {
+                $user_err->stack('お電話番号は必須項目です');
+                last;
+            }
+        }
+        
+        if (my $mail = $formdata->param('mail')) {
+            $mail =~ tr/Ａ-Ｚａ-ｚ０-９/A-Za-z0-9/;
+            if ($mail !~ /^[^@]+@[^.]+\..+/){
+                $user_err->stack('メールアドレスが正しくありません');
+            }
+        }
+        if ($formdata->param('etc') && length($formdata->param('etc')) > 10000) {
+            $user_err->stack('お問い合わせ内容がサイズの上限を超えました');
+        }
+    }
+    
+    sub mail_attr {
+        
+        my ($self) = @_;
+        my $c = $self->controller;
+        
+        my $tpl = Text::PSTemplate->new;
+        for my $key (@{$self->ini('form_elements')}) {
+            $tpl->set_var($key => $c->req->body_params->param($key));
+        }
+        my $subject = 'Someone send inquiry';
+        
+        my $body = $tpl->parse(<<'EOF');
 Thank you for Consider our product.
 
 【】
@@ -82,22 +82,22 @@ Thank you for Consider our product.
 <% $etc %>
 -----------------------------------------------
 EOF
-		$body = $self->jp_char_normalize($body);
-		return $subject, $body;
-	}
-	
-	sub mail_attr_respond {
-		
-		my ($self) = @_;
-		
-		my $c = $self->controller;
-		my $tpl = Text::PSTemplate->new;
-		for my $key (@{$self->ini('form_elements')}) {
-			$tpl->set_var($key => $c->req->body_params->param($key));
-		}
-		my $subject = 'Thank you';
-		
-		my $body = $tpl->parse(<<'EOF');
+        $body = $self->jp_char_normalize($body);
+        return $subject, $body;
+    }
+    
+    sub mail_attr_respond {
+        
+        my ($self) = @_;
+        
+        my $c = $self->controller;
+        my $tpl = Text::PSTemplate->new;
+        for my $key (@{$self->ini('form_elements')}) {
+            $tpl->set_var($key => $c->req->body_params->param($key));
+        }
+        my $subject = 'Thank you';
+        
+        my $body = $tpl->parse(<<'EOF');
 <% $rep %> 様
 
 Thank you
@@ -132,17 +132,17 @@ test@example.com
 ………………………………………………◇◆
 EOF
 
-		$body = $self->jp_char_normalize($body);
-		
-		return $subject, $body;
-	}
-	
-	sub jp_char_normalize {
-		
-		my ($self, $in) = @_;
-		$in =~ tr/[\x{ff5e}\x{2225}\x{ff0d}\x{ffe0}\x{ffe1}\x{ffe2}]/[\x{301c}\x{2016}\x{2212}\x{00a2}\x{00a3}\x{00ac}]/;
-		return $in;
-	}
+        $body = $self->jp_char_normalize($body);
+        
+        return $subject, $body;
+    }
+    
+    sub jp_char_normalize {
+        
+        my ($self, $in) = @_;
+        $in =~ tr/[\x{ff5e}\x{2225}\x{ff0d}\x{ffe0}\x{ffe1}\x{ffe2}]/[\x{301c}\x{2016}\x{2212}\x{00a2}\x{00a3}\x{00ac}]/;
+        return $in;
+    }
 
 1;
 

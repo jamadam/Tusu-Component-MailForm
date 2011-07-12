@@ -13,7 +13,7 @@ use Fcntl qw(:flock);
             'logfile'           => $app->home->rel_file(__PACKAGE__),
             'smtp_from'         => 'noreply', ## you can fill @host if needed
             'smtp_server'       => 'localhost',
-            'form_elements'     => [qw{name mail pref addr company tel1 tel2 tel3 etc}],
+            'form_elements'     => [qw{name mail pref addr company tel1 tel2 tel3 fax1 fax2 fax3 etc}],
             'auto_respond_to'   => 'mail',
             'upload' => {
                 allowed_extention => ['doc','xls','txt','pdf'],
@@ -59,30 +59,59 @@ use Fcntl qw(:flock);
         my $subject = 'Someone send inquiry';
         
         my $body = $tpl->parse(<<'EOF');
-Thank you for Consider our product.
+<html>
+<head>
+	<style type="text/css">
+		* {font-size:1em; font-weight:normal;}
+		h2 {border-left:5px solid #ccc; padding:3px 10px;}
+		th {text-align:right; padding:5px; background-color:#dde}
+		td {padding:5px;}
+		pre{font-family:inhefit}
+	</style>
+</head>
+<body>
+<p>
+    お問い合わせがありました
+</p>
 
-【】
------------------------------------------------
-[住所]
-  <% $addr %>
+<hr />
 
-[担当者名]
-  <% $rep %>
+<h2>
+    お問い合わせ内容
+</h2>
 
-[メールアドレス]
-  <% $mail %>
-
-[電話]
-  <% $tel1 %>-<% $tel2 %>-<% $tel3 %>
-
-[FAX]
-  <% $fax1 %>-<% $fax2 %>-<% $fax3 %>
-
-[備考欄]
-<% $etc %>
------------------------------------------------
+<table>
+	<tr>
+		<th>お名前</th>
+		<td><% $name %></td>
+	</tr>
+	<tr>
+		<th>メール</th>
+		<td><% $mail %></td>
+	</tr>
+	<tr>
+		<th>住所</th>
+		<td><% $pref %><% $addr %></td>
+	</tr>
+	<tr>
+		<th>会社名</th>
+		<td><% $company %></td>
+	</tr>
+	<tr>
+		<th>お電話</th>
+		<td><% $tel1 %>-<% $tel2 %>-<% $tel3 %></td>
+	</tr>
+	<tr>
+		<th>FAX</th>
+		<td><% $fax1 %>-<% $fax2 %>-<% $fax3 %></td>
+	</tr>
+	<tr>
+		<th>備考</th>
+		<td><pre><% $etc %></pre></td>
+	</tr>
+</table>
 EOF
-        $body = $self->jp_char_normalize($body);
+        
         return $subject, $body;
     }
     
@@ -98,50 +127,79 @@ EOF
         my $subject = 'Thank you';
         
         my $body = $tpl->parse(<<'EOF');
-<% $rep %> 様
+<html>
+<head>
+	<style type="text/css">
+		* {font-size:1em; font-weight:normal;}
+		h2 {border-left:5px solid #ccc; padding:3px 10px;}
+		th {text-align:right; padding:5px; background-color:#dde}
+		td {padding:5px;}
+		pre{font-family:inhefit}
+	</style>
+</head>
+<body>
+<p>
+    <% $rep %>様
+</p>
 
-Thank you
+<p>
+    お問い合わせありがとうございました。
+</p>
 
-【】
------------------------------------------------
-[住所]
-  <% $addr %>
+<h2>
+    お問い合わせ内容
+</h2>
 
-[担当者名]
-  <% $rep %>
+<hr />
 
-[メールアドレス]
-  <% $mail %>
+<table>
+	<tr>
+		<th>お名前</th>
+		<td><% $name %></td>
+	</tr>
+	<tr>
+		<th>メール</th>
+		<td><% $mail %></td>
+	</tr>
+	<tr>
+		<th>住所</th>
+		<td><% $pref %><% $addr %></td>
+	</tr>
+	<tr>
+		<th>会社名</th>
+		<td><% $company %></td>
+	</tr>
+	<tr>
+		<th>お電話</th>
+		<td><% $tel1 %>-<% $tel2 %>-<% $tel3 %></td>
+	</tr>
+	<tr>
+		<th>FAX</th>
+		<td><% $fax1 %>-<% $fax2 %>-<% $fax3 %></td>
+	</tr>
+	<tr>
+		<th>備考</th>
+		<td><pre><% $etc %></pre></td>
+	</tr>
+</table>
 
-[電話]
-  <% $tel1 %>-<% $tel2 %>-<% $tel3 %>
+<hr />
 
-[FAX]
-  <% $fax1 %>-<% $fax2 %>-<% $fax3 %>
-
-[備考欄]
-<% $etc %>
------------------------------------------------
-
-上記の内容で間違いがないか必ずご確認ください。
-万一、お申込みに覚えがない場合や、記載内容に間違いがある場合は、
-ご面倒ですが下記までご連絡ください。
-
+<p>
+    上記の内容で間違いがないか必ずご確認ください。
+    万一、お申込みに覚えがない場合や、記載内容に間違いがある場合は、
+    ご面倒ですが下記までご連絡ください。
+</p>
+<pre>
 ◆◇………………………………………………
 test@example.com
 ………………………………………………◇◆
+</pre>
+</body>
+</html>
 EOF
 
-        $body = $self->jp_char_normalize($body);
-        
         return $subject, $body;
-    }
-    
-    sub jp_char_normalize {
-        
-        my ($self, $in) = @_;
-        $in =~ tr/[\x{ff5e}\x{2225}\x{ff0d}\x{ffe0}\x{ffe1}\x{ffe2}]/[\x{301c}\x{2016}\x{2212}\x{00a2}\x{00a3}\x{00ac}]/;
-        return $in;
     }
 
 1;

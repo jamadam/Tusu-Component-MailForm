@@ -5,7 +5,7 @@ use utf8;
 use base qw(MojoX::Tusu::ComponentBase);
 use Encode;
 use Net::SMTP;
-use MIME::Entity;
+use MIME::Lite;
 use Fcntl qw(:flock);
 use Carp;
 
@@ -122,16 +122,40 @@ use Carp;
     sub mail_attr_respond {
         croak 'It must be implemented by sub classes';
     }
+	
+	sub html_to_plaintext {
+		my $html = shift;
+		$html = ($html =~ qr{<body.+?>(.+?)</body>}s)[0];
+		$html =~ s{<.+?>}{}g;
+		$html =~ s{\t}{  }g;
+		return $html;
+	}
     
     sub sendmail_backend {
         
         my ($self, $to, $subject, $body, $attach) = @_;
         my $c = $self->controller;
         
-        utf8::encode($subject);
-        Encode::from_to($subject, 'utf8', 'iso-2022-jp');
-        utf8::encode($body);
-        Encode::from_to($body, 'utf8', 'iso-2022-jp');
+		$subject = encode('MIME-Header', $subject);
+		
+		my $plain = html_to_plaintext($body);
+		
+		utf8::encode($body);
+		utf8::encode($plain);
+        
+		my $mime_sub = MIME::Lite->new(
+			Type 	=> 'multipart/alternative',
+		);
+		$mime_sub->attach(
+			Data     => $plain,
+			Type     => 'text/plain; charset=utf-8',
+			Encoding => 'Base64',
+		);
+		$mime_sub->attach(
+			Data     => $body,
+			Type     => 'text/html; charset=utf-8',
+			Encoding => 'Quoted-printable',
+		);
         
         $to = (ref $to) ? $to : [$to];
         
@@ -144,11 +168,13 @@ use Carp;
             $smtp->mail($smtp_from);
             $smtp->to($addr);
             
-            my $mime = MIME::Entity->build(
+    		$addr = encode('MIME-Header', $addr);
+            my $mime = MIME::Lite->new(
                 To      => $addr,
                 Subject => $subject,
-                Data    => [$body],
+                Type 	=> 'multipart/mixed',
             );
+    		$mime->attach($mime_sub);
             foreach my $name (@$attach) {
                 my $send_name = $name;
                 $send_name =~ s{^.+?_.+?_}{};
@@ -160,7 +186,7 @@ use Carp;
                 );
             }
             $smtp->data();
-            $smtp->datasend($mime->stringify);
+            $smtp->datasend($mime->as_string);
             $smtp->datasend();
             $smtp->quit();
         }

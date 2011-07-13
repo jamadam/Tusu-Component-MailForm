@@ -125,7 +125,9 @@ use Carp;
 	
 	sub html_to_plaintext {
 		my $html = shift;
-		$html = ($html =~ qr{<body.+?>(.+?)</body>}s)[0];
+		if ($html =~ qr{<body.*?>(.+?)</body>}s) {
+			$html = $1;
+		}
 		$html =~ s{<.+?>}{}g;
 		$html =~ s{\t}{  }g;
 		return $html;

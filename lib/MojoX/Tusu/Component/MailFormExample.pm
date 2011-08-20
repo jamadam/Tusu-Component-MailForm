@@ -7,19 +7,17 @@ use Fcntl qw(:flock);
     
     sub init {
         my ($self, $app) = @_;
-        $self->set_ini({
-            'tmp_dir'           => '',
-            'mailto'            => [],
-            'logfile'           => $app->home->rel_file(__PACKAGE__),
-            'smtp_from'         => 'noreply', ## you can fill @host if needed
-            'smtp_server'       => 'localhost',
-            'form_elements'     => [qw{name mail pref addr company tel1 tel2 tel3 fax1 fax2 fax3 etc}],
-            'auto_respond_to'   => 'mail',
-            'upload' => {
-                allowed_extention => ['doc','xls','txt','pdf'],
-                max_filesize => 100000,
-            }
-        });
+		$self->tmp_dir('');
+		$self->mailto([]);
+		$self->logfile($app->home->rel_file(__PACKAGE__));
+		$self->smtp_from('noreply'); ## you can fill @host if needed
+		$self->smtp_server('localhost');
+		$self->form_elements([qw{name mail pref addr company tel1 tel2 tel3 fax1 fax2 fax3 etc}]);
+		$self->auto_respond_to('mail');
+		$self->upload({
+			allowed_extention => ['doc','xls','txt','pdf'],
+			max_filesize => 100000,
+		});
     }
 
     sub validate_form {
@@ -53,7 +51,7 @@ use Fcntl qw(:flock);
         my $c = $self->controller;
         
         my $tpl = Text::PSTemplate->new;
-        for my $key (@{$self->ini('form_elements')}) {
+        for my $key (@{$self->form_elements}) {
             $tpl->set_var($key => $c->req->body_params->param($key));
         }
         my $subject = 'Someone send inquiry';
@@ -121,7 +119,7 @@ EOF
         
         my $c = $self->controller;
         my $tpl = Text::PSTemplate->new;
-        for my $key (@{$self->ini('form_elements')}) {
+        for my $key (@{$self->form_elements}) {
             $tpl->set_var($key => $c->req->body_params->param($key));
         }
         my $subject = 'Thank you';

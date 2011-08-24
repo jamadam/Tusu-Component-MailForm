@@ -236,20 +236,36 @@ use Carp;
         }
     }
     
-    ### --------------
+    ### ---
+    ### sha generator wrapper
+    ### ---
+	sub sha512_hex {
+		my $seed = shift;
+		my $hash;
+		$hash ||= eval {
+			require Digest::SHA;
+			Digest::SHA::sha512_hex($seed);
+		};
+		$hash ||= eval {
+			require Digest::SHA1;
+			Digest::SHA1::sha512_hex($seed);
+		};
+		if ($hash) {
+			return $hash;
+		}
+		die q{Library for SHA not available};
+	}
+	
+    ### ---
     ### generate session id
-    ### --------------
+    ### ---
     sub session_id {
-        
-        use Digest::SHA;
-        return Digest::SHA::sha512_hex($^T. $$. rand(1000000));
+		return sha512_hex($^T. $$. rand(1000000));
     }
     
     sub mail_id {
-        
         my ($self, $addr, $body) = @_;
-        use Digest::SHA;
-        return Digest::SHA::sha1($^T. $body);
+		return sha512_hex($^T. $body);
     }
     
     sub user_err {

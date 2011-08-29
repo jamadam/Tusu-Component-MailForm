@@ -5,21 +5,27 @@ use utf8;
 use base qw(MojoX::Tusu::Component::MailFormBase);
 use Fcntl qw(:flock);
     
+	__PACKAGE__->attr('tmp_dir');
+	__PACKAGE__->attr('mailto');
+	__PACKAGE__->attr('logfile');
+	__PACKAGE__->attr('smtp_from');
+	__PACKAGE__->attr('smtp_server');
+	__PACKAGE__->attr('form_elements');
+	__PACKAGE__->attr('auto_respond_to');
+	__PACKAGE__->attr('upload');
+	
     sub init {
         my ($self, $app) = @_;
-        $self->set_ini({
-            'tmp_dir'           => '',
-            'mailto'            => [],
-            'logfile'           => $app->home->rel_file(__PACKAGE__),
-            'smtp_from'         => 'noreply', ## you can fill @host if needed
-            'smtp_server'       => 'localhost',
-            'form_elements'     => [qw{name mail pref addr company tel1 tel2 tel3 fax1 fax2 fax3 etc}],
-            'auto_respond_to'   => 'mail',
-            'upload' => {
-                allowed_extention => ['doc','xls','txt','pdf'],
-                max_filesize => 100000,
-            }
-        });
+		$self->mailto([]);
+		$self->logfile($app->home->rel_file(__PACKAGE__));
+		$self->smtp_from('noreply'); ## you can fill @host if needed
+		$self->smtp_server('localhost');
+		$self->form_elements([qw{name mail pref addr company tel1 tel2 tel3 fax1 fax2 fax3 etc}]);
+		$self->auto_respond_to('mail');
+		$self->upload({
+			allowed_extention => ['doc','xls','txt','pdf'],
+			max_filesize => 100000,
+		});
     }
 
     sub validate_form {

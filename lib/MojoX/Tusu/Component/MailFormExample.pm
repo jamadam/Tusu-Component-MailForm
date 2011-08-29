@@ -16,6 +16,7 @@ use Fcntl qw(:flock);
 	
     sub init {
         my ($self, $app) = @_;
+		$self->tmp_dir('');
 		$self->mailto([]);
 		$self->logfile($app->home->rel_file(__PACKAGE__));
 		$self->smtp_from('noreply'); ## you can fill @host if needed
@@ -59,7 +60,7 @@ use Fcntl qw(:flock);
         my $c = $self->controller;
         
         my $tpl = Text::PSTemplate->new;
-        for my $key (@{$self->ini('form_elements')}) {
+        for my $key (@{$self->form_elements}) {
             $tpl->set_var($key => $c->req->body_params->param($key));
         }
         my $subject = 'Someone send inquiry';
@@ -127,7 +128,7 @@ EOF
         
         my $c = $self->controller;
         my $tpl = Text::PSTemplate->new;
-        for my $key (@{$self->ini('form_elements')}) {
+        for my $key (@{$self->form_elements}) {
             $tpl->set_var($key => $c->req->body_params->param($key));
         }
         my $subject = 'Thank you';

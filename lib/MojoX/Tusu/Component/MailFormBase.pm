@@ -9,6 +9,16 @@ use MIME::Lite;
 use Fcntl qw(:flock);
 use Carp;
 
+	__PACKAGE__->attr('mailto');
+	__PACKAGE__->attr('tmp_dir');
+	__PACKAGE__->attr('mailto');
+	__PACKAGE__->attr('logfile');
+	__PACKAGE__->attr('smtp_from');
+	__PACKAGE__->attr('smtp_server');
+	__PACKAGE__->attr('form_elements');
+	__PACKAGE__->attr('auto_respond_to');
+	__PACKAGE__->attr('upload');
+	
     sub get {
         
         my ($self, $c) = @_;
@@ -54,7 +64,7 @@ use Carp;
         my @files = $c->req->upload('file');
         foreach my $file (@files) {
             my $name = $c->session(__PACKAGE__. '::session_id'). '_file_'. $file->filename;
-            my $tmp_name = File::Spec->catfile($self->ini('upload')->{dir}, $name);
+            my $tmp_name = File::Spec->catfile($self->upload->{dir}, $name);
             $file->move_to($tmp_name);
         }
     }
@@ -67,7 +77,7 @@ use Carp;
         my ($self) = @_;
         my $c = $self->controller;
         my $body = '';
-        for my $key (@{$self->ini('form_elements')}) {
+        for my $key (@{$self->form_elements}) {
             $body .= sprintf("[%s]\n%s\n", $key, $c->req->body_params->param($key));
         }
         return 'Thank you for sending', $body;
@@ -77,7 +87,7 @@ use Carp;
         my ($self) = @_;
         my $c = $self->controller;
         my $body = '';
-        for my $key (@{$self->ini('form_elements')}) {
+        for my $key (@{$self->form_elements}) {
             $body .= sprintf("[%s]\n%s\n", $key, $c->req->body_params->param($key));
         }
         return 'Thank you for sending', $body;
@@ -87,20 +97,20 @@ use Carp;
         
         my ($self) = @_;
         my $c = $self->controller;
-        my $mailto = $self->ini('mailto');
-        my $auto_respond_to = $c->req->body_params->param($self->ini('auto_respond_to'));
+        my $mailto = $self->mailto;
+        my $auto_respond_to = $c->req->body_params->param($self->auto_respond_to);
         
         my @attach = ();
-        if ($self->ini('upload')) {
-            opendir(my $dir, $self->ini('upload')->{dir});
+        if ($self->upload) {
+            opendir(my $dir, $self->upload->{dir});
             my $filename_base = $c->session(__PACKAGE__. '::session_id');
             my @files = grep {
                 $_ =~ /^$filename_base\_/
-                && -f File::Spec->catfile($self->ini('upload')->{dir}, $_), 
+                && -f File::Spec->catfile($self->upload->{dir}, $_), 
             } readdir($dir);
             close($dir);
             foreach my $file (@files) {
-                push(@attach, $self->ini('upload')->{dir}. "/". $file);
+                push(@attach, $self->upload->{dir}. "/". $file);
             }
         }
         
@@ -162,8 +172,8 @@ use Carp;
         $to = (ref $to) ? $to : [$to];
         
         for my $addr (@$to) {
-            my $smtp = Net::SMTP->new($self->ini('smtp_server'));
-            my $smtp_from = $self->ini('smtp_from');
+            my $smtp = Net::SMTP->new($self->smtp_server);
+            my $smtp_from = $self->smtp_from;
             if ($smtp_from !~ /\@/) {
                 $smtp_from .= '@'. $c->req->url->to_abs->host;
             }
@@ -199,7 +209,7 @@ use Carp;
         my ($self) = @_;
         my $c = $self->controller;
         my $out = '';
-        for my $key (@{$self->ini('form_elements')}) {
+        for my $key (@{$self->form_elements}) {
             my $val = $c->req->body_params->param($key) || '';
             $out .= sprintf(qq{<input type="hidden" name="%s" value="%s" />}, $key, $val);
         }
@@ -221,7 +231,7 @@ use Carp;
     sub write_log {
         
         my ($self, $body) = @_;
-        if (my $file = $self->ini('logfile')) {
+        if (my $file = $self->logfile) {
             my $time = localtime(time());
             open(my $fh, ">>:utf8", $file) || warn "$file cannot open\n";
             if ($fh and flock($fh, LOCK_EX)) {

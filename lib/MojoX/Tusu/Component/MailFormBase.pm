@@ -102,7 +102,7 @@ use Carp;
         
         my @attach = ();
         if ($self->upload) {
-            opendir(my $dir, $self->upload->{dir});
+            opendir(my $dir, $self->upload->{dir}) or die "Unable to open upload directory";
             my $filename_base = $c->session(__PACKAGE__. '::session_id');
             my @files = grep {
                 $_ =~ /^$filename_base\_/

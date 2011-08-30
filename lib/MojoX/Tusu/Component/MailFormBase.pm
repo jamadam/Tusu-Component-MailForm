@@ -11,7 +11,6 @@ use Carp;
 
 	__PACKAGE__->attr('mailto');
 	__PACKAGE__->attr('tmp_dir');
-	__PACKAGE__->attr('mailto');
 	__PACKAGE__->attr('logfile');
 	__PACKAGE__->attr('smtp_from');
 	__PACKAGE__->attr('smtp_server');

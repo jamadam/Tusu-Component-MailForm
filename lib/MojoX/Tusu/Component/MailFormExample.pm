@@ -4,15 +4,6 @@ use warnings;
 use utf8;
 use base qw(MojoX::Tusu::Component::MailFormBase);
 use Fcntl qw(:flock);
-    
-	__PACKAGE__->attr('tmp_dir');
-	__PACKAGE__->attr('mailto');
-	__PACKAGE__->attr('logfile');
-	__PACKAGE__->attr('smtp_from');
-	__PACKAGE__->attr('smtp_server');
-	__PACKAGE__->attr('form_elements');
-	__PACKAGE__->attr('auto_respond_to');
-	__PACKAGE__->attr('upload');
 	
     sub init {
         my ($self, $app) = @_;
@@ -90,31 +81,31 @@ use Fcntl qw(:flock);
 <table>
 	<tr>
 		<th>お名前</th>
-		<td><% $name %></td>
+		<td><%= $name %></td>
 	</tr>
 	<tr>
 		<th>メール</th>
-		<td><% $mail %></td>
+		<td><%= $mail %></td>
 	</tr>
 	<tr>
 		<th>住所</th>
-		<td><% $pref %><% $addr %></td>
+		<td><%= $pref %><%= $addr %></td>
 	</tr>
 	<tr>
 		<th>会社名</th>
-		<td><% $company %></td>
+		<td><%= $company %></td>
 	</tr>
 	<tr>
 		<th>お電話</th>
-		<td><% $tel1 %>-<% $tel2 %>-<% $tel3 %></td>
+		<td><%= $tel1 %>-<%= $tel2 %>-<%= $tel3 %></td>
 	</tr>
 	<tr>
 		<th>FAX</th>
-		<td><% $fax1 %>-<% $fax2 %>-<% $fax3 %></td>
+		<td><%= $fax1 %>-<%= $fax2 %>-<%= $fax3 %></td>
 	</tr>
 	<tr>
 		<th>備考</th>
-		<td><pre><% $etc %></pre></td>
+		<td><pre><%= $etc %></pre></td>
 	</tr>
 </table>
 EOF
@@ -146,7 +137,7 @@ EOF
 </head>
 <body>
 <p>
-    <% $rep %>様
+    <%= $rep %>様
 </p>
 
 <p>
@@ -162,31 +153,31 @@ EOF
 <table>
 	<tr>
 		<th>お名前</th>
-		<td><% $name %></td>
+		<td><%= $name %></td>
 	</tr>
 	<tr>
 		<th>メール</th>
-		<td><% $mail %></td>
+		<td><%= $mail %></td>
 	</tr>
 	<tr>
 		<th>住所</th>
-		<td><% $pref %><% $addr %></td>
+		<td><%= $pref %><%= $addr %></td>
 	</tr>
 	<tr>
 		<th>会社名</th>
-		<td><% $company %></td>
+		<td><%= $company %></td>
 	</tr>
 	<tr>
 		<th>お電話</th>
-		<td><% $tel1 %>-<% $tel2 %>-<% $tel3 %></td>
+		<td><%= $tel1 %>-<%= $tel2 %>-<%= $tel3 %></td>
 	</tr>
 	<tr>
 		<th>FAX</th>
-		<td><% $fax1 %>-<% $fax2 %>-<% $fax3 %></td>
+		<td><%= $fax1 %>-<%= $fax2 %>-<%= $fax3 %></td>
 	</tr>
 	<tr>
 		<th>備考</th>
-		<td><pre><% $etc %></pre></td>
+		<td><pre><%= $etc %></pre></td>
 	</tr>
 </table>
 

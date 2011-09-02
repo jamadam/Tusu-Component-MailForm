@@ -50,10 +50,7 @@ use Fcntl qw(:flock);
         my ($self) = @_;
         my $c = $self->controller;
         
-        my $tpl = Text::PSTemplate->new;
-        for my $key (@{$self->form_elements}) {
-            $tpl->set_var($key => $c->req->body_params->param($key));
-        }
+        my $tpl = Text::PSTemplate->new($self->get_engine);
         my $subject = 'Someone send inquiry';
         
         my $body = $tpl->parse(<<'EOF');
@@ -81,31 +78,31 @@ use Fcntl qw(:flock);
 <table>
 	<tr>
 		<th>お名前</th>
-		<td><%= $name %></td>
+		<td><%= post_param('name') %></td>
 	</tr>
 	<tr>
 		<th>メール</th>
-		<td><%= $mail %></td>
+		<td><%= post_param('mail') %></td>
 	</tr>
 	<tr>
 		<th>住所</th>
-		<td><%= $pref %><%= $addr %></td>
+		<td><%= post_param('pref') %><%= post_param('addr') %></td>
 	</tr>
 	<tr>
 		<th>会社名</th>
-		<td><%= $company %></td>
+		<td><%= post_param('company') %></td>
 	</tr>
 	<tr>
 		<th>お電話</th>
-		<td><%= $tel1 %>-<%= $tel2 %>-<%= $tel3 %></td>
+		<td><%= post_param('tel1') %>-<%= post_param('tel2') %>-<%= post_param('tel3') %></td>
 	</tr>
 	<tr>
 		<th>FAX</th>
-		<td><%= $fax1 %>-<%= $fax2 %>-<%= $fax3 %></td>
+		<td><%= post_param('fax1') %>-<%= post_param('fax2') %>-<%= post_param('fax3') %></td>
 	</tr>
 	<tr>
 		<th>備考</th>
-		<td><pre><%= $etc %></pre></td>
+		<td><pre><%= post_param('etc') %></pre></td>
 	</tr>
 </table>
 EOF
@@ -118,10 +115,7 @@ EOF
         my ($self) = @_;
         
         my $c = $self->controller;
-        my $tpl = Text::PSTemplate->new;
-        for my $key (@{$self->form_elements}) {
-            $tpl->set_var($key => $c->req->body_params->param($key));
-        }
+        my $tpl = Text::PSTemplate->new($self->get_engine);
         my $subject = 'Thank you';
         
         my $body = $tpl->parse(<<'EOF');
@@ -153,31 +147,31 @@ EOF
 <table>
 	<tr>
 		<th>お名前</th>
-		<td><%= $name %></td>
+		<td><%= post_param('name') %></td>
 	</tr>
 	<tr>
 		<th>メール</th>
-		<td><%= $mail %></td>
+		<td><%= post_param('mail') %></td>
 	</tr>
 	<tr>
 		<th>住所</th>
-		<td><%= $pref %><%= $addr %></td>
+		<td><%= post_param('pref') %><%= post_param('addr') %></td>
 	</tr>
 	<tr>
 		<th>会社名</th>
-		<td><%= $company %></td>
+		<td><%= post_param('company') %></td>
 	</tr>
 	<tr>
 		<th>お電話</th>
-		<td><%= $tel1 %>-<%= $tel2 %>-<%= $tel3 %></td>
+		<td><%= post_param('tel1') %>-<%= post_param('tel2') %>-<%= post_param('tel3') %></td>
 	</tr>
 	<tr>
 		<th>FAX</th>
-		<td><%= $fax1 %>-<%= $fax2 %>-<%= $fax3 %></td>
+		<td><%= post_param('fax1') %>-<%= post_param('fax2') %>-<%= post_param('fax3') %></td>
 	</tr>
 	<tr>
 		<th>備考</th>
-		<td><pre><%= $etc %></pre></td>
+		<td><pre><%= post_param('etc') %></pre></td>
 	</tr>
 </table>
 

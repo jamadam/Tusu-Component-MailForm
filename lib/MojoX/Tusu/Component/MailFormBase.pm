@@ -179,9 +179,9 @@ use Carp;
             $smtp->mail($smtp_from);
             $smtp->to($addr);
             
-    		$addr = encode('MIME-Header', $addr);
             my $mime = MIME::Lite->new(
-                To      => $addr,
+				From    => encode('MIME-Header', $smtp_from),
+                To      => encode('MIME-Header', $addr),
                 Subject => $subject,
                 Type 	=> 'multipart/mixed',
             );

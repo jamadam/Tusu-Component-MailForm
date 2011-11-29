@@ -241,7 +241,7 @@ use Carp;
                 print $fh "\n";
             }
             close $fh;
-            chmod(0777, $file);
+            chmod(oct(777), $file);
         }
     }
     

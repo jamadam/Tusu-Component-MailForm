@@ -11,10 +11,11 @@ my %params = (
     PREREQ_PM     => {
     },
     BUILD_REQUIRES => {
-        'Test::More'          => '0.47',
-		'Test::Class' => '0.36',
-        'Test::UseAllModules' => '0.10',
-		'MIME::Entity'		  => '5.502',
+        'Test::More'  	        => '0.47',
+		'Test::Class' 			=> '0.36',
+        'Test::UseAllModules' 	=> '0.10',
+		'MIME::Entity'		  	=> '5.502',
+		'MojoX::Tusu'		  	=> '0.29',
     },
     META_MERGE => {
         resources => {

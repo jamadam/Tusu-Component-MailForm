@@ -15,7 +15,7 @@ my %params = (
 		'Test::Class' 			=> '0.36',
         'Test::UseAllModules' 	=> '0.10',
 		'MIME::Entity'		  	=> '5.502',
-		'MojoX::Tusu'		  	=> '0.29',
+		'MojoX::Tusu'		  	=> '0.30',
     },
     META_MERGE => {
         resources => {

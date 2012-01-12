@@ -34,7 +34,8 @@ use Carp;
     
     sub post {
         
-        my ($self, $c) = @_;
+        my ($self) = @_;
+        my $c = $self->controller;
         
         use Mojolicious::Sessions;
         if (! $c->session(__PACKAGE__. '::session_id')) {

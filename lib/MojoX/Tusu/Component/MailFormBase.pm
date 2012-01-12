@@ -25,11 +25,10 @@ use Carp;
         $self->save_temporary_file($c);
         my $template;
         if ($self->user_err->count) {
-            $template = $c->req->body_params->param('errorpage');
+			$self->render;
         } else {
-            $template = $c->req->body_params->param('nextpage');
+			$self->render(template => $c->req->body_params->param('nextpage'));
         }
-        $c->render(handler => 'tusu', template => $template);
     }
     
     sub post {
@@ -50,12 +49,11 @@ use Carp;
         
         my $template;
         if ($self->user_err->count) {
-            $template = $c->req->body_params->param('errorpage');
+			$self->render;
         } else {
             $self->sendmail;
-            $template = $c->req->body_params->param('nextpage');
+			$self->render(template => $c->req->body_params->param('nextpage'));
         }
-        $c->render(handler => 'tusu', template => $template);
     }
     
     sub save_temporary_file {

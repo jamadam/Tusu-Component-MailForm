@@ -214,18 +214,6 @@ use Carp;
         return $out;
     }
     
-    sub put_user_err : TplExport {
-        
-        my ($self, $id) = @_;
-        my $c = $self->controller;
-        if ($self->user_err->count) {
-            $id ||= 'error';
-            my @errs = map {'<li>'. $_. '</li>'} $self->user_err->array;
-            return '<ul id="'. $id. '">'. join('', @errs). '</ul>';
-        }
-        return;
-    }
-    
     sub write_log {
         
         my ($self, $body) = @_;
@@ -274,40 +262,6 @@ use Carp;
     sub mail_id {
         my ($self, $addr, $body) = @_;
 		return sha512_hex($^T. $body);
-    }
-    
-    sub user_err {
-        
-        my ($self) = @_;
-        my $c = $self->controller;
-        if (! $c->stash('user_err')) {
-            $c->stash('user_err', _Use_error->new)
-        }
-        return $c->stash('user_err');
-    }
-
-package _Use_error;
-use strict;
-use warnings;
-
-    sub new {
-        return bless [], shift;
-    }
-    
-    sub stack {
-        my ($self, $err) = @_;
-        push(@$self, $err);
-        return $self;
-    }
-    
-    sub count {
-        my ($self) = @_;
-        return scalar @$self;
-    }
-    
-    sub array {
-        my ($self) = @_;
-        return @$self;
     }
 
 1;

@@ -1,5 +1,5 @@
 Changes
-lib/MojoX/Tusu/Component/MailForm.pm
+lib/Tusu/Component/MailForm.pm
 Makefile.PL
 MANIFEST			This list of files
 README

@@ -1,4 +1,4 @@
-package MojoX::Tusu::Component::MailForm;
+package Tusu::Component::MailForm;
 
 use strict;
 use warnings;
@@ -18,12 +18,12 @@ __END__
 
 =head1 NAME
 
-MojoX::Tusu::Component::MailForm - 
+Tusu::Component::MailForm - 
 
 =head1 SYNOPSIS
 
-    use MojoX::Tusu::Component::MailForm;
-    MojoX::Tusu::Component::MailForm->new;
+    use Tusu::Component::MailForm;
+    Tusu::Component::MailForm->new;
 
 =head1 DESCRIPTION
 

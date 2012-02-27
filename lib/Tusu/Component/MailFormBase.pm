@@ -1,8 +1,8 @@
-package MojoX::Tusu::Component::MailFormBase;
+package Tusu::Component::MailFormBase;
 use strict;
 use warnings;
 use utf8;
-use base qw(MojoX::Tusu::ComponentBase);
+use base qw(Tusu::ComponentBase);
 use Encode;
 use Net::SMTP;
 use MIME::Lite;
@@ -270,7 +270,7 @@ __END__
 
 =head1 NAME
 
-MojoX::Tusu::Component::MailFormBase
+Tusu::Component::MailFormBase
 
 =head1 DESCRIPTION
 

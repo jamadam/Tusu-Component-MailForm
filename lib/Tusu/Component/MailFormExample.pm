@@ -1,8 +1,8 @@
-package MojoX::Tusu::Component::MailFormExample;
+package Tusu::Component::MailFormExample;
 use strict;
 use warnings;
 use utf8;
-use base qw(MojoX::Tusu::Component::MailFormBase);
+use base qw(Tusu::Component::MailFormBase);
 use Fcntl qw(:flock);
 	
     sub init {
@@ -200,7 +200,7 @@ __END__
 
 =head1 NAME
 
-MojoX::Tusu::Component::MailFormExample
+Tusu::Component::MailFormExample
 
 =head1 DESCRIPTION
 

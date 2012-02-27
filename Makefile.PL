@@ -3,10 +3,10 @@ use warnings;
 use ExtUtils::MakeMaker;
 
 my %params = (
-    NAME          => 'MojoX::Tusu::Component::MailForm',
+    NAME          => 'Tusu::Component::MailForm',
     AUTHOR        => 'sugama <sugama@jamadam.com>',
-    VERSION_FROM  => 'lib/MojoX/Tusu/Component/MailForm.pm',
-    ABSTRACT_FROM => 'lib/MojoX/Tusu/Component/MailForm.pm',
+    VERSION_FROM  => 'lib/Tusu/Component/MailForm.pm',
+    ABSTRACT_FROM => 'lib/Tusu/Component/MailForm.pm',
     LICENSE       => 'perl',
     PREREQ_PM     => {
     },
@@ -15,7 +15,7 @@ my %params = (
 		'Test::Class' 			=> '0.36',
         'Test::UseAllModules' 	=> '0.10',
 		'MIME::Entity'		  	=> '5.502',
-		'MojoX::Tusu'		  	=> '0.30',
+		'Tusu'		  	        => '0.01',
     },
     META_MERGE => {
         resources => {
